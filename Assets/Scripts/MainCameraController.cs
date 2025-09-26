@@ -6,16 +6,15 @@ public class MainCameraController : MonoBehaviour {
     Vector3 startPosition;
     Vector3 startRotation;
     public float rotationSpeed = 3.0f;
-	// Use this for initialization
+	
 	void Start () {
         startPosition = transform.position;
         startRotation = transform.rotation.eulerAngles;
 	}
 	
-	// Update is called once per frame
+	
 	void Update () {
-        if(Input.GetAxis("ResetCamera") != 0)
-        {
+        if(Input.GetAxis("ResetCamera") != 0) {
             ResetCamera();
         }
         Vector3 rotation = new Vector3();
@@ -26,8 +25,7 @@ public class MainCameraController : MonoBehaviour {
         transform.RotateAround(Vector3.zero,transform.up, -rotation.x);
         transform.RotateAround(Vector3.zero,transform.right, rotation.y);
 	}
-    public void ResetCamera()
-    {
+    public void ResetCamera() {
         transform.position = startPosition;
         transform.LookAt(Vector3.zero);
     }

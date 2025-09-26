@@ -13,74 +13,61 @@ public class SatellitesController : MonoBehaviour
     [SerializeField]
     private bool _randomColor;
    
-    public bool RandomColor
-    {
-        get
-        {
+    public bool RandomColor {
+        get {
             return _randomColor;
         }
 
-        set
-        {
+        set {
             _randomColor = value;
         }
     }
 
     private List<string> availableURLs;
-    public IEnumerator Start()
-    {
+    public IEnumerator Start() {
         yield return SatellitesMainController.Initialize();
         string[] satellitesNames = SatellitesMainController.AllSatellites;
         activeSatellites = new List<SatelliteInfo>();
-        if (searchField != null)
-        {
+        if (searchField != null) {
             searchField.Items = satellitesNames;
         }
-        searchField.OnSelect = delegate (string t)
-        {
+
+        searchField.OnSelect = delegate (string t) {
             this.AddSatellite(t);
         };
         _planetSelector = FindObjectOfType<PlanetSelector>();
     }
-    public void Update()
-    {
+    public void Update() { }
 
-    }
-    public void OnGUI()
-    {
+    public void OnGUI() {
         if (!GUIController.Enable || activeSatellites == null) return;
-        float height = 5;//Screen.height/2 - 20.0f;
-        foreach (var sat in activeSatellites)
-        {
-            if (GUI.Button(new Rect(Screen.width - 20, height, 20, 20), new GUIContent("X")))
-            {
+        float height = 5;
+        foreach (var sat in activeSatellites) {
+            if (GUI.Button(new Rect(Screen.width - 20, height, 20, 20), new GUIContent("X"))) {
                 DeleteSatellite(sat);
                 return;
             }
-            if (GUI.Button(new Rect(Screen.width - 120, height, 100, 20), new GUIContent(sat.Name)) && sat.IsActive)
-            {
+            if (GUI.Button(new Rect(Screen.width - 120, height, 100, 20), new GUIContent(sat.Name)) && sat.IsActive) {
                 _planetSelector.SelectObject(sat.Transform);
                 return;
             }
             height += 30;
         }
     }
-    private void DeleteSatellite(SatelliteInfo sat)
-    {
-        if (activeSatellites.Contains(sat))
-        {
+    private void DeleteSatellite(SatelliteInfo sat) {
+        if (activeSatellites.Contains(sat)) {
             activeSatellites.Remove(sat);
             Destroy(sat.Transform.gameObject);
         }
     }
-    private void AddSatellite(string name)
-    {
+    private void AddSatellite(string name) {
         if (string.IsNullOrEmpty(name) || activeSatellites.Any(x=>x.Name == name) || !SatellitesMainController.DoesSatelliteExists(name)) return;
         GameObject prefab = Resources.Load("Prefabs/SatellitePrefab") as GameObject;
         GameObject satelliteObj = Instantiate(prefab, transform);
+		Debug.Log(satelliteObj);
         SatelliteController satelliteController = satelliteObj.GetComponent<SatelliteController>();
-        satelliteController.OnEnabled = delegate ()
-        {
+		Debug.Log(satelliteController);
+        satelliteController.OnEnabled = delegate () {
             if (_planetSelector != null)
                 _planetSelector.SelectObject(satelliteController.transform);
         };

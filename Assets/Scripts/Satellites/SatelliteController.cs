@@ -17,37 +17,31 @@ public class SatelliteController : MonoBehaviour {
     [SerializeField]
     private bool _randomColor;
     private const float _distanceCoef = 960000;
+
+    // TODO: Rename to _onEnabled
     private UnityAction onEnabled = null;
     private decimal _lastOrbitUpdate = 0;
-    public string SatelliteName
-    {
+    public string SatelliteName {
         get { return _satName; }
         set { _satName = value; name = value; }
     }
 
-    public int InformationInterval
-    {
-        get
-        {
+    public int InformationInterval {
+        get {
             return _informationInterval;
         }
 
-        set
-        {
-            if (value <= 0) _informationInterval = 14;
-            _informationInterval = value;
+        set {
+            _informationInterval = value > 0 ? value : 14;
         }
     }
 
-    public Color Color
-    {
-        get
-        {
+    public Color Color {
+        get {
             return _color;
         }
 
-        set
-        {
+        set {
             _color = value;
             _line.startColor = value;
             _line.endColor = value;
@@ -55,49 +49,39 @@ public class SatelliteController : MonoBehaviour {
         }
     }
 
-    public bool RandomColor
-    {
-        get
-        {
+    // TODO: Remove accessor
+    public bool RandomColor {
+        get {
             return _randomColor;
         }
 
-        set
-        {
+        set {
             _randomColor = value;
         }
     }
 
-    public double SatPeriod
-    {
-        get
-        {
+    public double SatPeriod {
+        get {
             return _satPeriod;
         }
 
-        set
-        {
+        set {
             _satPeriod = value;
             if(_positionController != null)
                 _positionController.Period = value;
         }
     }
-    public UnityAction OnEnabled
-    {
-        get
-        {
+    public UnityAction OnEnabled {
+        get {
             return onEnabled;
         }
 
-        set
-        {
+        set {
             onEnabled = value;
         }
     }
-    public bool Active
-    {
-        get
-        {
+    public bool Active {
+        get {
             return _active;
         }
     }
@@ -105,8 +89,8 @@ public class SatelliteController : MonoBehaviour {
     LineRenderer _line;
     int _lastUsedEquation;
     bool _isUpdating = false;
-	// Use this for initialization
-	void Start () {
+
+    void Start () {
         _lastUsedEquation = 0;
         SatellitesMainController.Initialize();
         _positionController = new SatellitePositionController(_satPeriod);
@@ -116,8 +100,7 @@ public class SatelliteController : MonoBehaviour {
         _text = GetComponentInChildren<TextMesh>();
         _text.text = _satName;
         _text.color = _color;
-        if(_randomColor)
-        {
+        if(_randomColor) {
             Color = new Color(Random.value, Random.value, Random.value);
         }
         transform.localPosition = Vector3.zero;
@@ -127,47 +110,42 @@ public class SatelliteController : MonoBehaviour {
         if (_isUpdating) return;
         StartCoroutine(_UpdateInfo(TimeSystem.Time-InformationInterval*(decimal)_satPeriod,TimeSystem.Time+InformationInterval*(decimal)_satPeriod));
     }
-    IEnumerator _UpdateInfo(decimal start_time, decimal end_time)
-    {
+
+    IEnumerator _UpdateInfo(decimal start_time, decimal end_time) {
         _isUpdating = true;
         yield return SatellitesMainController.PrepareSatelliteInfo(this.SatelliteName, start_time, end_time, 1000);
         _positionController.Positions = SatellitesMainController.GetDownloadsResult(SatelliteName);
         _lastUsedEquation = 0;
         _isUpdating = false;
     }
-	// Update is called once per frame
-	void Update () {
+
+    void Update () {
         Vector3 pos;
-        if(_positionController.GetPosition(TimeSystem.Time,out pos))
-        {
+        if(_positionController.GetPosition(TimeSystem.Time,out pos)) {
             transform.localPosition = pos / _distanceCoef;
-            if(_lastOrbitUpdate <= TimeSystem.Time-(decimal)_satPeriod / 4)
-            {
+            if(_lastOrbitUpdate <= TimeSystem.Time-(decimal)_satPeriod / 4) {
                 UpdateOrbit();
             }
             EnableSatellite();
         }
-        else
-        {
+        else {
             DisableSatellite();
         }
-        if(_positionController.NeedUpdate)
-        {
+        if(_positionController.NeedUpdate) {
             UpdateSatelliteData();
         }
 	}
-    void DisableSatellite()
-    {
+
+    void DisableSatellite() {
         if (!_active) return;
         _text.gameObject.SetActive(false);
         _line.enabled = false;
         _active = false;
         transform.localPosition = Vector3.zero;
     }
-    void EnableSatellite()
-    {
-        if(onEnabled != null)
-        {
+
+    void EnableSatellite() {
+        if(onEnabled != null) {
             onEnabled();
             onEnabled = null;
         }
@@ -177,18 +155,17 @@ public class SatelliteController : MonoBehaviour {
         _active = true;
         UpdateOrbit();
     }
-    void UpdateOrbit()
-    {
+
+    void UpdateOrbit() {
         _lastOrbitUpdate = TimeSystem.Time;
         Vector3[] points = _positionController.GetPoints(TimeSystem.Time - (decimal)_satPeriod*0.75m,TimeSystem.Time + (decimal)_satPeriod*0.75m);
-        if(points != null && points.Length != 0)
-        {
+        if(points != null && points.Length != 0) {
             _line.positionCount = points.Length;
             for (int i = 0; i < points.Length; i++) _line.SetPosition(i, points[i]/_distanceCoef);
         }
     }
-    private void OnDestroy()
-    {
+
+    private void OnDestroy() {
         Destroy(_line.gameObject);
     }
 }

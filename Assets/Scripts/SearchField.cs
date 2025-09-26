@@ -12,41 +12,32 @@ public class SearchField : MonoBehaviour {
 
     [SerializeField]
     string[] _items;
-    public string[] Items
-    {
-        get
-        {
+    public string[] Items {
+        get {
             return _items;
         }
 
-        set
-        {
+        set {
             _items = value;
         }
     }
 
-    public UnityAction<string> OnSelect
-    {
-        get
-        {
+    public UnityAction<string> OnSelect {
+        get {
             return onSelect;
         }
 
-        set
-        {
+        set {
             onSelect = value;
         }
     }
 
-    public int MinCharsToShow
-    {
-        get
-        {
+    public int MinCharsToShow {
+        get {
             return _minCharsToShow;
         }
 
-        set
-        {
+        set {
             _minCharsToShow = value;
         }
     }
@@ -55,12 +46,10 @@ public class SearchField : MonoBehaviour {
     string[] _selectedItems = new string[0];
     [SerializeField]
     private UnityAction<string> onSelect;
-    // Use this for initialization
+    
     void Start () {
-        if(onSelect == null)
-        {
-            onSelect = delegate (string x)
-            {
+        if(onSelect == null) {
+            onSelect = delegate (string x) {
                 Debug.Log(x);
             };
         }
@@ -69,28 +58,24 @@ public class SearchField : MonoBehaviour {
         cb.Items = (from item in Items
                    select new ComboBoxItem(item))
                    .ToArray();
-        GetComponent<InputField>().onEndEdit.AddListener(new UnityAction<string>( x=>
-        {
+        GetComponent<InputField>().onEndEdit.AddListener(new UnityAction<string>( x=> {
             //ToggleComboBox(false, false);
             //onSelect(x);
         }));
         GetComponent<InputField>().onValueChanged.AddListener(ShowSimilars);
-        cb.OnSelection = new System.Action<string>(x=>
-        {
+        cb.OnSelection = new System.Action<string>(x=> {
             GetComponent<InputField>().text = x;
             onSelect(x);
             ToggleComboBox(false, true);
         });
 	}
 	
-	// Update is called once per frame
+	
 	void Update () {
 
     }
-    void ShowSimilars(string t)
-    {
-        if (t.Length < MinCharsToShow)
-        {
+    void ShowSimilars(string t) {
+        if (t.Length < MinCharsToShow) {
             ToggleComboBox(false, false);
             return;
         }
@@ -104,17 +89,13 @@ public class SearchField : MonoBehaviour {
         cb.Refresh();
         _lastLength = t.Length;
     }
-    void ToggleComboBox(bool state, bool directClick)
-    {
-        if(cb.Active != state)
-        {
+    void ToggleComboBox(bool state, bool directClick) {
+        if(cb.Active != state) {
             cb.ToggleComboBox(directClick);
         }
     }
-    bool Contains(string s, string[] parts)
-    {
-        foreach(string p in parts)
-        {
+    bool Contains(string s, string[] parts) {
+        foreach(string p in parts) {
             if (!s.Contains(p)) return false;
         }
         return true;

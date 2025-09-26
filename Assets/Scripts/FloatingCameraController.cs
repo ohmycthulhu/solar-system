@@ -7,22 +7,17 @@ public class FloatingCameraController : MonoBehaviour {
     public float turnSpeed = Mathf.PI/4;
     public Transform focusObject = null;
     private Vector3 distance;
-    public Transform CenterPoint
-    {
-        get
-        {
+    public Transform CenterPoint {
+        get {
             return focusObject;
         }
-        set
-        {
+        set {
             focusObject = value;
             if (value == null) return;
-            if (value.localPosition == Vector3.zero)
-            {
+            if (value.localPosition == Vector3.zero) {
                 distance = (-value.position).normalized * CalculateDistance(value.lossyScale.magnitude);
             }
-            else
-            {
+            else {
                 distance = (-value.localPosition).normalized * CalculateDistance(value.lossyScale.magnitude);
             }
             if (distance == Vector3.zero) distance = Vector3.back * value.lossyScale.z * 1.5f;
@@ -32,30 +27,27 @@ public class FloatingCameraController : MonoBehaviour {
             transform.LookAt(focusObject.position);
         }
     }
-	// Use this for initialization
+	
 	void Start () {
         if (focusObject != null) CenterPoint = focusObject;
         screenWidthSemiaxis = Screen.width/2;
         screenHeightSemiaxis = Screen.height / 2;
 	}
 	
-	// Update is called once per frame
+	
 	void LateUpdate () {
         if (focusObject == null) return;
         Vector3 centerPos = focusObject.position;
         float x;
-        if ((x = -Input.GetAxis("Mouse ScrollWheel")) != 0)
-        {
+        if ((x = -Input.GetAxis("Mouse ScrollWheel")) != 0) {
             distance *= (1 + x);
         }
-        if (Input.GetAxis("ResetCamera") != 0)
-        {
+        if (Input.GetAxis("ResetCamera") != 0) {
             ResetCamera();
         }
         bool isButtonPressed = Input.GetAxis("Fire2") != 0;
         var turnAngle = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        if (isButtonPressed)
-        {
+        if (isButtonPressed) {
             Vector3 mousePosition = Input.mousePosition;
             turnAngle += new Vector3(
                 (mousePosition.x - screenWidthSemiaxis) / screenWidthSemiaxis,
@@ -69,16 +61,13 @@ public class FloatingCameraController : MonoBehaviour {
             transform.RotateAround(centerPos, transform.up, -turnAngle.x * turnSpeed);
         distance = transform.position - centerPos;
     }
-    public void Reset()
-    {
+    public void Reset() {
         
     }
-    private float CalculateDistance(float size)
-    {
+    private float CalculateDistance(float size) {
         return 2.0f + 1.3f * size;
     }
-    public void ResetCamera()
-    {
+    public void ResetCamera() {
         distance = (Vector3.zero - focusObject.position).normalized * CalculateDistance(focusObject.lossyScale.magnitude);
         if (distance == Vector3.zero) distance = Vector3.back * focusObject.lossyScale.z * 1.5f;
     }

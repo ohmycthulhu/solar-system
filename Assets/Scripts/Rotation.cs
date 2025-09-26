@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Rotation : MonoBehaviour {
-    public enum Direction
-    {
+    public enum Direction {
         PITCH,
         ROLL,
         YAW
@@ -13,29 +12,24 @@ public class Rotation : MonoBehaviour {
     [SerializeField]
     private double _period = 1;
     private Vector3 _startAngles;
-    private void Start()
-    {
+    private void Start() {
         _startAngles = transform.eulerAngles;
     }
     System.DateTime _lastDate;
 
-    public double Period
-    {
-        get
-        {
+    public double Period {
+        get {
             return _period;
         }
 
-        set
-        {
+        set {
             _period = value;
         }
     }
 
     void FixedUpdate () {
         Vector3 dir = new Vector3();
-        switch (direction)
-        {
+        switch (direction) {
             case Direction.PITCH:
                 dir = Vector3.right;
                 break;
@@ -49,10 +43,8 @@ public class Rotation : MonoBehaviour {
         Vector3 angles = dir * 360 * 
             (float)(
             ((TimeSystem.Time - System.Math.Floor(TimeSystem.Time / (decimal)_period) * (decimal)_period))/(decimal)_period);
-        if (_lastDate != null)
-        {
-            if(_lastDate.ToShortDateString() != TimeSystem.Date.ToShortDateString())
-            {
+        if (_lastDate != null) {
+            if(_lastDate.ToShortDateString() != TimeSystem.Date.ToShortDateString()) {
             }
         }
         _lastDate = TimeSystem.Date;

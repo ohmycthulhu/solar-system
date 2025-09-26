@@ -7,12 +7,12 @@ public struct SatelliteInfo{
     public int ID;
     public double Period;
     public SatelliteController Controller;
-    public bool IsActive
-    {
+ 
+    public bool IsActive {
         get { return Controller.Active; }
     }
-    public Transform Transform
-    {
+
+    public Transform Transform {
         get { return Controller.transform; }
     }
 }

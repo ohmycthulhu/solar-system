@@ -46,8 +46,7 @@ namespace TestMySpline
 	/// You must provide points in X sort order.
 	/// </para>
 	/// </remarks>
-	public class CubicSpline
-	{
+	public class CubicSpline {
 		#region Fields
 
 		// N-1 spline coefficients for N points
@@ -65,8 +64,7 @@ namespace TestMySpline
 		/// <summary>
 		/// Default ctor.
 		/// </summary>
-		public CubicSpline()
-		{
+		public CubicSpline() {
 		}
 
 		/// <summary>
@@ -77,8 +75,7 @@ namespace TestMySpline
 		/// <param name="startSlope">Optional slope constraint for the first point. Single.NaN means no constraint.</param>
 		/// <param name="endSlope">Optional slope constraint for the final point. Single.NaN means no constraint.</param>
 		/// <param name="debug">Turn on console output. Default is false.</param>
-		public CubicSpline(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
-		{
+		public CubicSpline(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false) {
 			Fit(x, y, startSlope, endSlope, debug);
 		}
 
@@ -89,8 +86,7 @@ namespace TestMySpline
 		/// <summary>
 		/// Throws if Fit has not been called.
 		/// </summary>
-		private void CheckAlreadyFitted()
-		{
+		private void CheckAlreadyFitted() {
 			if (a == null) throw new Exception("Fit must be called before you can evaluate.");
 		}
 
@@ -101,15 +97,12 @@ namespace TestMySpline
 		/// This allows xs to be less than x[0] and/or greater than x[n-1]. So allows extrapolation.
 		/// This keeps state, so requires that x be sorted and xs called in ascending order, and is not multi-thread safe.
 		/// </summary>
-		private int GetNextXIndex(float x)
-		{
-			if (x < xOrig[_lastIndex])
-			{
+		private int GetNextXIndex(float x) {
+			if (x < xOrig[_lastIndex]) {
 				throw new ArgumentException("The X values to evaluate must be sorted.");
 			}
 
-			while ((_lastIndex < xOrig.Length - 2) && (x > xOrig[_lastIndex + 1]))
-			{
+			while ((_lastIndex < xOrig.Length - 2) && (x > xOrig[_lastIndex + 1])) {
 				_lastIndex++;
 			}
 
@@ -123,8 +116,7 @@ namespace TestMySpline
 		/// <param name="j">Which spline to use.</param>
 		/// <param name="debug">Turn on console output. Default is false.</param>
 		/// <returns>The y value.</returns>
-		private float EvalSpline(float x, int j, bool debug = false)
-		{
+		private float EvalSpline(float x, int j, bool debug = false) {
 			float dx = xOrig[j + 1] - xOrig[j];
 			float t = (x - xOrig[j]) / dx;
 			float y = (1 - t) * yOrig[j] + t * yOrig[j + 1] + t * (1 - t) * (a[j] * (1 - t) + b[j] * t); // equation 9
@@ -149,8 +141,7 @@ namespace TestMySpline
 		/// <param name="endSlope">Optional slope constraint for the final point. Single.NaN means no constraint.</param>
 		/// <param name="debug">Turn on console output. Default is false.</param>
 		/// <returns>The computed y values for each xs.</returns>
-		public float[] FitAndEval(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
-		{
+		public float[] FitAndEval(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false) {
 			Fit(x, y, startSlope, endSlope, debug);
 			return Eval(xs, debug);
 		}
@@ -166,10 +157,8 @@ namespace TestMySpline
 		/// <param name="startSlope">Optional slope constraint for the first point. Single.NaN means no constraint.</param>
 		/// <param name="endSlope">Optional slope constraint for the final point. Single.NaN means no constraint.</param>
 		/// <param name="debug">Turn on console output. Default is false.</param>
-		public void Fit(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
-		{
-			if (Single.IsInfinity(startSlope) || Single.IsInfinity(endSlope))
-			{
+		public void Fit(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false) {
+			if (Single.IsInfinity(startSlope) || Single.IsInfinity(endSlope)) {
 				throw new Exception("startSlope and endSlope cannot be infinity.");
 			}
 
@@ -184,22 +173,19 @@ namespace TestMySpline
 			float dx1, dx2, dy1, dy2;
 
 			// First row is different (equation 16 from the article)
-			if (float.IsNaN(startSlope))
-			{
+			if (float.IsNaN(startSlope)) {
 				dx1 = x[1] - x[0];
 				m.C[0] = 1.0f / dx1;
 				m.B[0] = 2.0f * m.C[0];
 				r[0] = 3 * (y[1] - y[0]) / (dx1 * dx1);
 			}
-			else
-			{
+			else {
 				m.B[0] = 1;
 				r[0] = startSlope;
 			}
 
 			// Body rows (equation 15 from the article)
-			for (int i = 1; i < n - 1; i++)
-			{
+			for (int i = 1; i < n - 1; i++) {
 				dx1 = x[i] - x[i - 1];
 				dx2 = x[i + 1] - x[i];
 
@@ -213,16 +199,14 @@ namespace TestMySpline
 			}
 
 			// Last row also different (equation 17 from the article)
-			if (float.IsNaN(endSlope))
-			{
+			if (float.IsNaN(endSlope)) {
 				dx1 = x[n - 1] - x[n - 2];
 				dy1 = y[n - 1] - y[n - 2];
 				m.A[n - 1] = 1.0f / dx1;
 				m.B[n - 1] = 2.0f * m.A[n - 1];
 				r[n - 1] = 3 * (dy1 / (dx1 * dx1));
 			}
-			else
-			{
+			else {
 				m.B[n - 1] = 1;
 				r[n - 1] = endSlope;
 			}
@@ -235,8 +219,7 @@ namespace TestMySpline
 			this.a = new float[n - 1];
 			this.b = new float[n - 1];
 
-			for (int i = 1; i < n; i++)
-			{
+			for (int i = 1; i < n; i++) {
 				dx1 = x[i] - x[i - 1];
 				dy1 = y[i] - y[i - 1];
 				a[i - 1] = k[i - 1] * dx1 - dy1; // equation 10 from the article
@@ -258,16 +241,14 @@ namespace TestMySpline
 		/// <param name="x">Input. X coordinates to evaluate the fitted curve at.</param>
 		/// <param name="debug">Turn on console output. Default is false.</param>
 		/// <returns>The computed y values for each x.</returns>
-		public float[] Eval(float[] x, bool debug = false)
-		{
+		public float[] Eval(float[] x, bool debug = false) {
 			CheckAlreadyFitted();
 
 			int n = x.Length;
 			float[] y = new float[n];
 			_lastIndex = 0; // Reset simultaneous traversal in case there are multiple calls
 
-			for (int i = 0; i < n; i++)
-			{
+			for (int i = 0; i < n; i++) {
 				// Find which spline can be used to compute this x (by simultaneous traverse)
 				int j = GetNextXIndex(x[i]);
 
@@ -287,16 +268,14 @@ namespace TestMySpline
 		/// <param name="x">Input. X coordinates to evaluate the fitted curve at.</param>
 		/// <param name="debug">Turn on console output. Default is false.</param>
 		/// <returns>The computed y values for each x.</returns>
-		public float[] EvalSlope(float[] x, bool debug = false)
-		{
+		public float[] EvalSlope(float[] x, bool debug = false) {
 			CheckAlreadyFitted();
 
 			int n = x.Length;
 			float[] qPrime = new float[n];
 			_lastIndex = 0; // Reset simultaneous traversal in case there are multiple calls
 
-			for (int i = 0; i < n; i++)
-			{
+			for (int i = 0; i < n; i++) {
 				// Find which spline can be used to compute this x (by simultaneous traverse)
 				int j = GetNextXIndex(x[i]);
 
@@ -330,8 +309,7 @@ namespace TestMySpline
 		/// <param name="endSlope">Optional slope constraint for the final point. Single.NaN means no constraint.</param>
 		/// <param name="debug">Turn on console output. Default is false.</param>
 		/// <returns>The computed y values for each xs.</returns>
-		public static float[] Compute(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
-		{
+		public static float[] Compute(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false) {
 			CubicSpline spline = new CubicSpline();
 			return spline.FitAndEval(x, y, xs, startSlope, endSlope, debug);
 		}
@@ -354,16 +332,14 @@ namespace TestMySpline
         /// not need to be normalized. If either is NaN then neither is used.</param>
         /// <param name="lastDy">See description of dxN.</param>
         public static void FitParametric(float[] x, float[] y, int nOutputPoints, out float[] xs, out float[] ys,
-            float firstDx = Single.NaN, float firstDy = Single.NaN, float lastDx = Single.NaN, float lastDy = Single.NaN)
-		{
+            float firstDx = Single.NaN, float firstDy = Single.NaN, float lastDx = Single.NaN, float lastDy = Single.NaN) {
 			// Compute distances
 			int n = x.Length;
 			float[] dists = new float[n]; // cumulative distance
 			dists[0] = 0;
 			float totalDist = 0;
 
-			for (int i = 1; i < n; i++)
-			{
+			for (int i = 1; i < n; i++) {
 				float dx = x[i] - x[i - 1];
 				float dy = y[i] - y[i - 1];
 				float dist = (float)Math.Sqrt(dx * dx + dy * dy);
@@ -376,8 +352,7 @@ namespace TestMySpline
 			float[] times = new float[nOutputPoints];
 			times[0] = 0;
 
-			for (int i = 1; i < nOutputPoints; i++)
-			{
+			for (int i = 1; i < nOutputPoints; i++) {
 				times[i] = times[i - 1] + dt;
 			}
 
@@ -392,15 +367,13 @@ namespace TestMySpline
 			CubicSpline ySpline = new CubicSpline();
 			ys = ySpline.FitAndEval(dists, y, times, firstDy / dt, lastDy / dt);
 		}
-        public static void FitParametric(float[][] parametrs,int nOutputPoints, out float[][] outParam)
-        {
+        public static void FitParametric(float[][] parametrs,int nOutputPoints, out float[][] outParam) {
             int n = parametrs.Min(x=>x.Length);
             float[] dists = new float[n]; // cumulative distance
             dists[0] = 0;
             float totalDist = 0;
 
-            for (int i = 1; i < n; i++)
-            {
+            for (int i = 1; i < n; i++) {
                 float[] dP = (from cur in parametrs
                              select cur[i] - cur[i - 1]).ToArray();
                 float dist = (float)Math.Sqrt(dP.Select(x=>x*x).Sum());
@@ -413,32 +386,25 @@ namespace TestMySpline
             float[] times = new float[nOutputPoints];
             times[0] = 0;
 
-            for (int i = 1; i < nOutputPoints; i++)
-            {
+            for (int i = 1; i < nOutputPoints; i++) {
                 times[i] = times[i - 1] + dt;
             }
             outParam = (from param in parametrs
                        select (new CubicSpline()).
                        FitAndEval(dists, param, times, 0, 0)).ToArray();
         }
-        private static void NormalizeVector(ref float dx, ref float dy)
-        {
-            if (!Single.IsNaN(dx) && !Single.IsNaN(dy))
-            {
+        private static void NormalizeVector(ref float dx, ref float dy) {
+            if (!Single.IsNaN(dx) && !Single.IsNaN(dy)) {
                 float d = (float)Math.Sqrt(dx * dx + dy * dy);
 
-                if (d > Single.Epsilon) // probably not conservative enough, but catches the (0,0) case at least
-                {
+                if (d > Single.Epsilon) { // probably not conservative enough, but catches the (0,0) case at least {
                     dx = dx / d;
                     dy = dy / d;
                 }
-                else
-                {
+                else {
                     throw new ArgumentException("The input vector is too small to be normalized.");
                 }
-            }
-            else
-            {
+            } else {
                 // In case one is NaN and not the other
                 dx = dy = Single.NaN;
             }

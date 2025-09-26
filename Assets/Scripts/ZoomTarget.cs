@@ -24,32 +24,27 @@ public class ZoomTarget : MonoBehaviour {
 
 	void Update () {
 		// Get the left mouse button
-		if(Input.GetMouseButtonDown(0))
-		{
+		if(Input.GetMouseButtonDown(0)) {
 			// Get mouse origin
 			mouseOrigin = Input.mousePosition;
 			isRotating = true;
 		}
-        else
-        {
+        else {
             isRotating = false;
         }
 		// Get the middle mouse button
-		if(Input.GetMouseButtonDown(1))
-		{
+		if(Input.GetMouseButtonDown(1)) {
 			// Get mouse origin
 			mouseOrigin = Input.mousePosition;
 			isZooming = true;
         }
-        else
-        {
+        else {
             isZooming = false;
         }
         
 
 		// Rotate camera along X and Y axis
-		if (isRotating)
-		{
+		if (isRotating) {
 			Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
 
 			transform.RotateAround(transform.position, transform.right, -pos.y * turnSpeed);
@@ -57,8 +52,7 @@ public class ZoomTarget : MonoBehaviour {
 		}
 
 		// Move the camera linearly along Z axis
-		if (isZooming)
-		{
+		if (isZooming) {
 			Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
 
 			Vector3 move = pos.y * zoomSpeed * transform.forward; 

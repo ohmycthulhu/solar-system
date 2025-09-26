@@ -8,7 +8,7 @@ public class TrailController : MonoBehaviour {
     bool restored;
     float time;
     IEnumerator ie;
-	// Use this for initialization
+	
 	void Start () {
         tr = GetComponent<TrailRenderer>();
         time = tr.time;
@@ -16,8 +16,7 @@ public class TrailController : MonoBehaviour {
         ie = Restore();
         StartCoroutine(ie);
     }
-    IEnumerator Restore()
-    {
+    IEnumerator Restore() {
         yield return new WaitForSeconds(1);
         tr.time = time;
     }
