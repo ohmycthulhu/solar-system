@@ -18,7 +18,6 @@ public class SatelliteController : MonoBehaviour {
     private bool _randomColor;
     private const float _distanceCoef = 960000;
 
-    // TODO: Rename to _onEnabled
     private UnityAction onEnabled = null;
     private decimal _lastOrbitUpdate = 0;
     public string SatelliteName {
@@ -49,7 +48,6 @@ public class SatelliteController : MonoBehaviour {
         }
     }
 
-    // TODO: Remove accessor
     public bool RandomColor {
         get {
             return _randomColor;

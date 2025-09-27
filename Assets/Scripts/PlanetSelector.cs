@@ -7,7 +7,6 @@ using System.IO;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-// TODO: Move logic for selecting camera into a separate class
 public class PlanetSelector : MonoBehaviour {
     [SerializeField]
     public InputField dateInputField = null;
@@ -153,7 +152,6 @@ public class PlanetSelector : MonoBehaviour {
         
     }
     void SelectCamera(bool next) {
-        // TODO: Rewrite to use `CameraSelector.SelectedIndex`
         // Floating => Free => Main
         if(floatingCamera.GetComponent<Camera>().enabled) {
             if (next) SelectFreeCamera();

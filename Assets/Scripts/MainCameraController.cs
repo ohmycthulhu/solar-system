@@ -11,7 +11,7 @@ public class MainCameraController : MonoBehaviour {
         startPosition = transform.position;
         startRotation = transform.rotation.eulerAngles;
 	}
-	
+
 	
 	void Update () {
         if(Input.GetAxis("ResetCamera") != 0) {
